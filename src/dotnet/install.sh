@@ -146,6 +146,16 @@ if [ ! -e /usr/bin/dotnet ]; then
     ln --symbolic "$DOTNET_ROOT/dotnet" /usr/bin/dotnet
 fi
 
+# Add .NET global tools to PATH at runtime when $HOME is known
+# This script will be sourced by login shells and adds the user's .dotnet/tools directory to PATH
+cat > /etc/profile.d/dotnet-tools-path.sh << 'EOF'
+# Add .NET global tools to PATH if the directory exists
+if [ -d "$HOME/.dotnet/tools" ]; then
+    export PATH="$PATH:$HOME/.dotnet/tools"
+fi
+EOF
+chmod +x /etc/profile.d/dotnet-tools-path.sh
+
 # Clean up
 rm -rf /var/lib/apt/lists/*
 rm -rf scripts
